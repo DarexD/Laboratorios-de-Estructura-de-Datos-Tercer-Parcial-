@@ -309,6 +309,9 @@ string datoToString(T val) {
 }
 
 template <typename T>
+int getBalance(Nodo<T>* n); // Forward declaration just in case, though it should be visible if defined above
+
+template <typename T>
 InfoImpresion obtenerInfoImpresion(Nodo<T>* raiz) {
     if (raiz == NULL) {
         return {vector<string>(), 0, 0, 0};
@@ -318,6 +321,13 @@ InfoImpresion obtenerInfoImpresion(Nodo<T>* raiz) {
     InfoImpresion infoDer = obtenerInfoImpresion(raiz->derecho);
 
     string datoStr = datoToString(raiz->dato);
+    
+    // AGREGADO: Mostrar factor de equilibrio
+    int balance = getBalance(raiz);
+    stringstream ssBal;
+    ssBal << "(" << balance << ")";
+    datoStr += ssBal.str();
+
     int anchoDato = datoStr.length();
 
     InfoImpresion infoActual;
@@ -561,10 +571,23 @@ void ejecutarMenu() {
 
                     // 2. Mostrar Pasos (Casos Aplicados)
                     cout << "\n2. PROCEDIMIENTO DE BALANCEO (CASOS DETECTADOS):" << endl;
-                    bool rotacionAplicada = false;
-                    raiz = convertirAAVL(raiz, rotacionAplicada);
                     
-                    if (!rotacionAplicada) {
+                    bool algunaRotacion = false;
+                    bool rotacionEnPasada;
+                    int pasada = 1;
+
+                    do {
+                        rotacionEnPasada = false;
+                        raiz = convertirAAVL(raiz, rotacionEnPasada);
+                        
+                        if (rotacionEnPasada) {
+                            algunaRotacion = true;
+                            // Opcional: Mostrar mensaje de fin de pasada si queremos ser muy detallados
+                            // cout << "--- Fin de pasada " << pasada++ << ". Verificando nuevamente... ---" << endl;
+                        }
+                    } while (rotacionEnPasada);
+                    
+                    if (!algunaRotacion) {
                         cout << "(El árbol ya cumple con las propiedades AVL. No es necesario balancear)" << endl;
                     }
                     
