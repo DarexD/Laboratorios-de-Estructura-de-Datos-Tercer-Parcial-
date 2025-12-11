@@ -6,6 +6,7 @@
 #include <sstream>
 #include <cstdlib> // Para rand() y srand()
 #include <ctime>   // Para time()
+#include <cctype>  // Para toupper() y isalpha()
 
 using namespace std;
 
@@ -215,6 +216,28 @@ T leerDato(const string& mensaje) {
             cout << "\n¡Error! Entrada inválida. Intente de nuevo.\n" << endl;
             cin.clear();
             cin.ignore(numeric_limits<streamsize>::max(), '\n');
+        }
+    }
+}
+
+// Especialización para leer caracteres (valida longitud 1 y convierte a mayúscula)
+template <>
+char leerDato<char>(const string& mensaje) {
+    string entrada;
+    while (true) {
+        cout << mensaje;
+        getline(cin, entrada);
+        
+        // Si el usuario solo presionó Enter sin escribir nada, getline lee vacio. 
+        // En cin >> normal esto se salta espacios. Aqui debemos manejarlo.
+        if (entrada.empty()) {
+            continue; 
+        }
+
+        if (entrada.length() == 1 && isalpha(entrada[0])) {
+            return toupper(entrada[0]);
+        } else {
+            cout << "\n¡Error! Debe ingresar una única letra (A-Z).\n" << endl;
         }
     }
 }
