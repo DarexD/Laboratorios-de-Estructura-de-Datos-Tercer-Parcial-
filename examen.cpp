@@ -9,16 +9,18 @@
 
 using namespace std;
 
-// Estructura del nodo del árbol binario
+// Estructura del nodo del árbol binario (Template)
+template <typename T>
 struct Nodo {
-    int dato;
-    Nodo* izquierdo;
-    Nodo* derecho;
+    T dato;
+    Nodo<T>* izquierdo;
+    Nodo<T>* derecho;
 };
 
 // Función para crear un nuevo nodo
-Nodo* crearNodo(int valor) {
-    Nodo* nuevo = new Nodo;
+template <typename T>
+Nodo<T>* crearNodo(T valor) {
+    Nodo<T>* nuevo = new Nodo<T>;
     nuevo->dato = valor;
     nuevo->izquierdo = NULL;
     nuevo->derecho = NULL;
@@ -26,7 +28,8 @@ Nodo* crearNodo(int valor) {
 }
 
 // Función para insertar un nodo en el árbol binario de búsqueda
-Nodo* insertar(Nodo* raiz, int valor, bool mostrarMensaje = true) {
+template <typename T>
+Nodo<T>* insertar(Nodo<T>* raiz, T valor, bool mostrarMensaje = true) {
     if (raiz == NULL) {
         return crearNodo(valor);
     }
@@ -45,7 +48,8 @@ Nodo* insertar(Nodo* raiz, int valor, bool mostrarMensaje = true) {
 }
 
 // Función para buscar un valor en el árbol
-Nodo* buscar(Nodo* raiz, int valor) {
+template <typename T>
+Nodo<T>* buscar(Nodo<T>* raiz, T valor) {
     if (raiz == NULL || raiz->dato == valor) {
         return raiz;
     }
@@ -57,19 +61,20 @@ Nodo* buscar(Nodo* raiz, int valor) {
     return buscar(raiz->derecho, valor);
 }
 
-// Función auxiliar para encontrar el nodo con el valor mínimo (para eliminación)
-Nodo* encontrarMinimo(Nodo* nodo) {
-    Nodo* actual = nodo;
+// Función auxiliar para encontrar el nodo con el valor mínimo
+template <typename T>
+Nodo<T>* encontrarMinimo(Nodo<T>* nodo) {
+    Nodo<T>* actual = nodo;
     while (actual && actual->izquierdo != NULL) {
         actual = actual->izquierdo;
     }
     return actual;
 }
 
-// Función para eliminar un nodo del árbol
-// Función auxiliar para encontrar el nodo con el valor máximo (para eliminación por predecesor)
-Nodo* encontrarMaximo(Nodo* nodo) {
-    Nodo* actual = nodo;
+// Función auxiliar para encontrar el nodo con el valor máximo
+template <typename T>
+Nodo<T>* encontrarMaximo(Nodo<T>* nodo) {
+    Nodo<T>* actual = nodo;
     while (actual && actual->derecho != NULL) {
         actual = actual->derecho;
     }
@@ -77,8 +82,8 @@ Nodo* encontrarMaximo(Nodo* nodo) {
 }
 
 // Función para eliminar un nodo del árbol
-// estrategia: 1 = Mayor de los Menores (Predecesor), 2 = Menor de los Mayores (Sucesor)
-Nodo* eliminar(Nodo* raiz, int valor, int estrategia = 2) {
+template <typename T>
+Nodo<T>* eliminar(Nodo<T>* raiz, T valor, int estrategia = 2) {
     if (raiz == NULL) {
         cout << "\nEl valor " << valor << " no se encuentra en el árbol.\n";
         return raiz;
@@ -96,24 +101,24 @@ Nodo* eliminar(Nodo* raiz, int valor, int estrategia = 2) {
         }
         // Caso 2: Nodo con un solo hijo
         else if (raiz->izquierdo == NULL) {
-            Nodo* temp = raiz->derecho;
+            Nodo<T>* temp = raiz->derecho;
             delete raiz;
             return temp;
         } else if (raiz->derecho == NULL) {
-            Nodo* temp = raiz->izquierdo;
+            Nodo<T>* temp = raiz->izquierdo;
             delete raiz;
             return temp;
         }
         // Caso 3: Nodo con dos hijos
         else {
             if (estrategia == 1) {
-                // Estrategia 1: Mayor de los Menores (Predecesor Inorden del subárbol izquierdo)
-                Nodo* temp = encontrarMaximo(raiz->izquierdo);
+                // Estrategia 1: Mayor de los Menores
+                Nodo<T>* temp = encontrarMaximo(raiz->izquierdo);
                 raiz->dato = temp->dato;
                 raiz->izquierdo = eliminar(raiz->izquierdo, temp->dato, estrategia);
             } else {
-                // Estrategia 2: Menor de los Mayores (Sucesor Inorden del subárbol derecho)
-                Nodo* temp = encontrarMinimo(raiz->derecho);
+                // Estrategia 2: Menor de los Mayores
+                Nodo<T>* temp = encontrarMinimo(raiz->derecho);
                 raiz->dato = temp->dato;
                 raiz->derecho = eliminar(raiz->derecho, temp->dato, estrategia);
             }
@@ -122,107 +127,127 @@ Nodo* eliminar(Nodo* raiz, int valor, int estrategia = 2) {
     return raiz;
 }
 
-// Función para insertar valores aleatorios
-void insertarAleatorios(Nodo*& raiz, int cantidad) {
-    cout << "\nInsertando " << cantidad << " valores aleatorios: ";
-    for (int i = 0; i < cantidad; ++i) {
-        int valor = rand() % 100 + 1; // Valores entre 1 y 100
-        cout << valor << " ";
-        raiz = insertar(raiz, valor, false); // false para no mostrar mensaje de duplicados repetidamente
-    }
-    cout << "\n\nInserción aleatoria completada.\n";
-}
+// --- LÓGICA AVL (TEMPLATE) ---
 
-// --- LÓGICA AVL (BALANCEO) ---
-
-// Función para obtener la altura de un nodo
-int getAltura(Nodo* n) {
+template <typename T>
+int getAltura(Nodo<T>* n) {
     if (n == NULL) return 0;
     int alturaIzq = getAltura(n->izquierdo);
     int alturaDer = getAltura(n->derecho);
     return 1 + max(alturaIzq, alturaDer);
 }
 
-// Función para obtener el factor de equilibrio
-int getBalance(Nodo* n) {
+template <typename T>
+int getBalance(Nodo<T>* n) {
     if (n == NULL) return 0;
     return getAltura(n->izquierdo) - getAltura(n->derecho);
 }
 
-// CASO 1 (LL) y CASO 2 (RR): Rotaciones Simples
-
-// Rotación a la Derecha (para Caso 1: Izquierda-Izquierda)
-Nodo* rotacionDerecha(Nodo* y) {
-    Nodo* x = y->izquierdo;
-    Nodo* T2 = x->derecho;
-
-    // Rotación
+template <typename T>
+Nodo<T>* rotacionDerecha(Nodo<T>* y) {
+    Nodo<T>* x = y->izquierdo;
+    Nodo<T>* T2 = x->derecho;
     x->derecho = y;
     y->izquierdo = T2;
-
-    // Retorna nueva raíz
     return x;
 }
 
-// Rotación a la Izquierda (para Caso 2: Derecha-Derecha)
-Nodo* rotacionIzquierda(Nodo* x) {
-    Nodo* y = x->derecho;
-    Nodo* T2 = y->izquierdo;
-
-    // Rotación
+template <typename T>
+Nodo<T>* rotacionIzquierda(Nodo<T>* x) {
+    Nodo<T>* y = x->derecho;
+    Nodo<T>* T2 = y->izquierdo;
     y->izquierdo = x;
     x->derecho = T2;
-
-    // Retorna nueva raíz
     return y;
 }
 
-// Función para balancear un nodo individual aplicando los 4 casos
-Nodo* balancearNodo(Nodo* r) {
+template <typename T>
+Nodo<T>* balancearNodo(Nodo<T>* r, bool& rotacionAplicada) {
     int balance = getBalance(r);
 
-    // Caso 1: Izquierda-Izquierda (LL) -> Rotación Derecha
     if (balance > 1 && getBalance(r->izquierdo) >= 0) {
         cout << "Aplicando Caso 1 (LL): Rotación Derecha en nodo " << r->dato << endl;
+        rotacionAplicada = true;
         return rotacionDerecha(r);
     }
-
-    // Caso 2: Derecha-Derecha (RR) -> Rotación Izquierda
     if (balance < -1 && getBalance(r->derecho) <= 0) {
         cout << "Aplicando Caso 2 (RR): Rotación Izquierda en nodo " << r->dato << endl;
+        rotacionAplicada = true;
         return rotacionIzquierda(r);
     }
-
-    // Caso 3: Izquierda-Derecha (LR) -> Rotación Izquierda en hijo + Rotación Derecha
     if (balance > 1 && getBalance(r->izquierdo) < 0) {
         cout << "Aplicando Caso 3 (LR): Rotación Izq-Der en nodo " << r->dato << endl;
+        rotacionAplicada = true;
         r->izquierdo = rotacionIzquierda(r->izquierdo);
         return rotacionDerecha(r);
     }
-
-    // Caso 4: Derecha-Izquierda (RL) -> Rotación Derecha en hijo + Rotación Izquierda
     if (balance < -1 && getBalance(r->derecho) > 0) {
         cout << "Aplicando Caso 4 (RL): Rotación Der-Izq en nodo " << r->dato << endl;
+        rotacionAplicada = true;
         r->derecho = rotacionDerecha(r->derecho);
         return rotacionIzquierda(r);
     }
-
-    return r; // No requiere balanceo
+    return r;
 }
 
-// Función recursiva para convertir todo el árbol en AVL (Post-orden)
-Nodo* convertirAAVL(Nodo* raiz) {
+template <typename T>
+Nodo<T>* convertirAAVL(Nodo<T>* raiz, bool& rotacionAplicada) {
     if (raiz == NULL) return NULL;
-
-    // Primero balanceamos los subárboles (de abajo hacia arriba)
-    raiz->izquierdo = convertirAAVL(raiz->izquierdo);
-    raiz->derecho = convertirAAVL(raiz->derecho);
-
-    // Luego balanceamos el nodo actual con la nueva altura de sus hijos
-    return balancearNodo(raiz);
+    raiz->izquierdo = convertirAAVL(raiz->izquierdo, rotacionAplicada);
+    raiz->derecho = convertirAAVL(raiz->derecho, rotacionAplicada);
+    return balancearNodo(raiz, rotacionAplicada);
 }
 
-// --- LÓGICA DE VISUALIZACIÓN (RECICLADA DE 2.cpp) ---
+// --- UTILIDADES GENÉRICAS ---
+
+// Entrada de datos genérica
+template <typename T>
+T leerDato(const string& mensaje) {
+    T dato;
+    while (true) {
+        cout << mensaje;
+        if (cin >> dato) {
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+            return dato;
+        } else {
+            cout << "\n¡Error! Entrada inválida. Intente de nuevo.\n" << endl;
+            cin.clear();
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+        }
+    }
+}
+
+// Especialización simple para leerEntero (usado para opciones de menú)
+int leerOpcion(const string& mensaje) {
+    return leerDato<int>(mensaje);
+}
+
+// Generación aleatoria (Sobrecarga para int y char)
+template <typename T>
+T generarAleatorio();
+
+template <>
+int generarAleatorio<int>() {
+    return rand() % 100 + 1; // 1 a 100
+}
+
+template <>
+char generarAleatorio<char>() {
+    return (char)(rand() % 26 + 65); // A a Z
+}
+
+template <typename T>
+void insertarAleatorios(Nodo<T>*& raiz, int cantidad) {
+    cout << "\nInsertando " << cantidad << " valores aleatorios: ";
+    for (int i = 0; i < cantidad; ++i) {
+        T valor = generarAleatorio<T>();
+        cout << valor << " ";
+        raiz = insertar(raiz, valor, false);
+    }
+    cout << "\n\nInserción aleatoria completada.\n";
+}
+
+// --- VISUALIZACIÓN ---
 
 struct InfoImpresion {
     vector<string> lineas;
@@ -231,13 +256,15 @@ struct InfoImpresion {
     int posRaiz;
 };
 
-string intToString(int val) {
+template <typename T>
+string datoToString(T val) {
     stringstream ss;
     ss << val;
     return ss.str();
 }
 
-InfoImpresion obtenerInfoImpresion(Nodo* raiz) {
+template <typename T>
+InfoImpresion obtenerInfoImpresion(Nodo<T>* raiz) {
     if (raiz == NULL) {
         return {vector<string>(), 0, 0, 0};
     }
@@ -245,7 +272,7 @@ InfoImpresion obtenerInfoImpresion(Nodo* raiz) {
     InfoImpresion infoIzq = obtenerInfoImpresion(raiz->izquierdo);
     InfoImpresion infoDer = obtenerInfoImpresion(raiz->derecho);
 
-    string datoStr = intToString(raiz->dato);
+    string datoStr = datoToString(raiz->dato);
     int anchoDato = datoStr.length();
 
     InfoImpresion infoActual;
@@ -284,7 +311,6 @@ InfoImpresion obtenerInfoImpresion(Nodo* raiz) {
     if (infoIzq.altura == 0) {
         infoActual.altura = infoDer.altura + 2;
         infoActual.ancho = infoDer.ancho + 2;
-        
         infoActual.posRaiz = anchoDato / 2;
         
         stringstream ssDato;
@@ -307,16 +333,11 @@ InfoImpresion obtenerInfoImpresion(Nodo* raiz) {
     }
 
     int espacioEntreHijos = 2;
-    
     infoActual.altura = max(infoIzq.altura, infoDer.altura) + 2;
-    
     int totalAnchoHijos = infoIzq.ancho + espacioEntreHijos + infoDer.ancho;
-    
     int posRaizIzqAbs = infoIzq.posRaiz;
     int posRaizDerAbs = infoIzq.ancho + espacioEntreHijos + infoDer.posRaiz;
-    
     int posRaizDeseada = (posRaizIzqAbs + posRaizDerAbs) / 2;
-    
     infoActual.ancho = max(totalAnchoHijos, posRaizDeseada + anchoDato/2 + 2);
     infoActual.posRaiz = posRaizDeseada;
     
@@ -333,7 +354,6 @@ InfoImpresion obtenerInfoImpresion(Nodo* raiz) {
     stringstream ssConex;
     int posConexIzq = posRaizIzqAbs + 1; 
     if (posConexIzq >= posRaizDeseada) posConexIzq = posRaizDeseada - 1;
-    
     int posConexDer = posRaizDerAbs - 1;
     if (posConexDer <= posRaizDeseada) posConexDer = posRaizDeseada + 1;
     
@@ -347,7 +367,6 @@ InfoImpresion obtenerInfoImpresion(Nodo* raiz) {
     int maxLineas = max(infoIzq.lineas.size(), infoDer.lineas.size());
     for(int i=0; i<maxLineas; i++) {
         stringstream ssHijo;
-        
         if (i < infoIzq.lineas.size()) {
             ssHijo << infoIzq.lineas[i];
             int faltante = infoIzq.ancho - infoIzq.lineas[i].length();
@@ -355,62 +374,40 @@ InfoImpresion obtenerInfoImpresion(Nodo* raiz) {
         } else {
             ssHijo << string(infoIzq.ancho, ' ');
         }
-        
         ssHijo << string(espacioEntreHijos, ' ');
-        
         if (i < infoDer.lineas.size()) {
             ssHijo << infoDer.lineas[i];
         }
-        
         if (ssHijo.str().length() < infoActual.ancho) {
             ssHijo << string(infoActual.ancho - ssHijo.str().length(), ' ');
         }
-        
         infoActual.lineas.push_back(ssHijo.str());
     }
-    
     return infoActual;
 }
 
-void visualizarArbol(Nodo* raiz) {
+template <typename T>
+void visualizarArbol(Nodo<T>* raiz) {
     if (raiz == NULL) {
         cout << "\n¡El árbol está vacío!\n" << endl;
         return;
     }
-    
     cout << "\n========== VISUALIZACIÓN DEL ÁRBOL ==========\n" << endl;
-    
     InfoImpresion info = obtenerInfoImpresion(raiz);
-    
     for (const string& linea : info.lineas) {
         cout << linea << endl;
     }
-    
     cout << "\n============================================\n" << endl;
 }
 
-// --- FIN LÓGICA DE VISUALIZACIÓN ---
+// --- MAIN ---
 
-void liberarArbol(Nodo* raiz) {
+template <typename T>
+void liberarArbol(Nodo<T>* raiz) {
     if (raiz != NULL) {
         liberarArbol(raiz->izquierdo);
         liberarArbol(raiz->derecho);
         delete raiz;
-    }
-}
-
-int leerNumeroEntero(const string& mensaje) {
-    int numero;
-    while (true) {
-        cout << mensaje;
-        if (cin >> numero) {
-            cin.ignore(numeric_limits<streamsize>::max(), '\n');
-            return numero;
-        } else {
-            cout << "\n¡Error! Debe ingresar un número entero válido.\n" << endl;
-            cin.clear();
-            cin.ignore(numeric_limits<streamsize>::max(), '\n');
-        }
     }
 }
 
@@ -428,28 +425,29 @@ void mostrarMenu() {
     cout << "╚════════════════════════════════════════════╝" << endl;
 }
 
-int main() {
-    srand(time(0)); // Inicializar semilla aleatoria
-    Nodo* raiz = NULL;
-    int opcion, valor, cantidad;
-    
+// Función template para ejecutar el menú con el tipo seleccionado
+template <typename T>
+void ejecutarMenu() {
+    Nodo<T>* raiz = NULL;
+    int opcion;
+    T valor;
+    int cantidad;
 
-    
     do {
         mostrarMenu();
-        opcion = leerNumeroEntero("\nIngrese su opción: ");
+        opcion = leerOpcion("\nIngrese su opción: ");
         
         switch (opcion) {
             case 1:
                 cout << "\n--- INSERTAR VALOR (MANUAL) ---" << endl;
-                valor = leerNumeroEntero("Ingrese el valor a insertar: ");
+                valor = leerDato<T>("Ingrese el valor a insertar: ");
                 raiz = insertar(raiz, valor);
                 cout << "¡Proceso de inserción finalizado!" << endl;
                 break;
                 
             case 2:
                 cout << "\n--- INSERTAR VALORES ALEATORIOS ---" << endl;
-                cantidad = leerNumeroEntero("¿Cuántos valores desea generar?: ");
+                cantidad = leerOpcion("¿Cuántos valores desea generar?: ");
                 if (cantidad > 0) {
                     insertarAleatorios(raiz, cantidad);
                 } else {
@@ -462,7 +460,7 @@ int main() {
                 if (raiz == NULL) {
                     cout << "¡El árbol está vacío!" << endl;
                 } else {
-                    valor = leerNumeroEntero("Ingrese el valor a buscar: ");
+                    valor = leerDato<T>("Ingrese el valor a buscar: ");
                     if (buscar(raiz, valor) != NULL) {
                         cout << "\n¡El valor " << valor << " SÍ se encuentra en el árbol!" << endl;
                     } else {
@@ -476,17 +474,16 @@ int main() {
                 if (raiz == NULL) {
                     cout << "¡El árbol está vacío!" << endl;
                 } else {
-                    valor = leerNumeroEntero("Ingrese el valor a eliminar: ");
-                    Nodo* nodoA = buscar(raiz, valor);
+                    valor = leerDato<T>("Ingrese el valor a eliminar: ");
+                    Nodo<T>* nodoA = buscar(raiz, valor);
                     if (nodoA != NULL) {
-                        int estrategia = 2; // Por defecto: Menor de los Mayores
-                        // Solo preguntamos si el nodo tiene dos hijos, ya que es el único caso donde importa
+                        int estrategia = 2; 
                         if (nodoA->izquierdo != NULL && nodoA->derecho != NULL) {
                             cout << "\nEl nodo tiene dos hijos. Seleccione estrategia de reemplazo:" << endl;
                             cout << "1. Mayor de los Menores (Predecesor)" << endl;
                             cout << "2. Menor de los Mayores (Sucesor)" << endl;
                             do {
-                                estrategia = leerNumeroEntero("Opción (1 o 2): ");
+                                estrategia = leerOpcion("Opción (1 o 2): ");
                                 if (estrategia != 1 && estrategia != 2) {
                                   cout << "Opción inválida. Intente de nuevo." << endl;
                                 }
@@ -506,6 +503,7 @@ int main() {
                 break;
                 
             case 6:
+                cout << "\n========== EXAMEN: CONVERSIÓN A AVL ==========" << endl;
                 if (raiz == NULL) {
                     cout << "¡El árbol está vacío!" << endl;
                 } else {
@@ -518,7 +516,13 @@ int main() {
 
                     // 2. Mostrar Pasos (Casos Aplicados)
                     cout << "\n2. PROCEDIMIENTO DE BALANCEO (CASOS DETECTADOS):" << endl;
-                    raiz = convertirAAVL(raiz);
+                    bool rotacionAplicada = false;
+                    raiz = convertirAAVL(raiz, rotacionAplicada);
+                    
+                    if (!rotacionAplicada) {
+                        cout << "(El árbol ya cumple con las propiedades AVL. No es necesario balancear)" << endl;
+                    }
+                    
                     cout << "\n------------------------------------------------" << endl;
                     cout << "¡Proceso de balanceo completado!" << endl;
                     cout << "Presione ENTER para ver el resultado final..." << endl;
@@ -542,6 +546,33 @@ int main() {
         }
         
     } while (opcion != 0);
+}
+
+int main() {
+    srand(time(0)); // Inicializar semilla aleatoria
+    
+    int tipoDato;
+    cout << "╔════════════════════════════════════════════╗" << endl;
+    cout << "║     SELECCIÓN DE TIPO DE DATO DE ARBOL     ║" << endl;
+    cout << "╠════════════════════════════════════════════╣" << endl;
+    cout << "║  1. Trabajar con NÚMEROS (int)             ║" << endl;
+    cout << "║  2. Trabajar con LETRAS (char)             ║" << endl;
+    cout << "╚════════════════════════════════════════════╝" << endl;
+    
+    do {
+        tipoDato = leerOpcion("\nSeleccione una opción (1 o 2): ");
+        if (tipoDato != 1 && tipoDato != 2) {
+            cout << "Opción inválida. Intente de nuevo." << endl;
+        }
+    } while (tipoDato != 1 && tipoDato != 2);
+    
+    if (tipoDato == 1) {
+        cout << "\nInicializando sistema para NÚMEROS..." << endl;
+        ejecutarMenu<int>();
+    } else {
+        cout << "\nInicializando sistema para LETRAS..." << endl;
+        ejecutarMenu<char>();
+    }
     
     return 0;
 }
