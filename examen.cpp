@@ -171,24 +171,44 @@ Nodo<T>* balancearNodo(Nodo<T>* r, bool& rotacionAplicada) {
     if (balance > 1 && getBalance(r->izquierdo) >= 0) {
         cout << "Desbalance en nodo " << r->dato << " (Factor: " << balance << "). Aplicando Caso 1 (LL): Rotación Derecha" << endl;
         rotacionAplicada = true;
-        return rotacionDerecha(r);
+        Nodo<T>* nuevaRaiz = rotacionDerecha(r);
+        cout << "Subárbol resultante:" << endl;
+        visualizarArbol(nuevaRaiz);
+        cout << "(Presione ENTER para continuar...)" << endl;
+        cin.get();
+        return nuevaRaiz;
     }
     if (balance < -1 && getBalance(r->derecho) <= 0) {
         cout << "Desbalance en nodo " << r->dato << " (Factor: " << balance << "). Aplicando Caso 2 (RR): Rotación Izquierda" << endl;
         rotacionAplicada = true;
-        return rotacionIzquierda(r);
+        Nodo<T>* nuevaRaiz = rotacionIzquierda(r);
+        cout << "Subárbol resultante:" << endl;
+        visualizarArbol(nuevaRaiz);
+        cout << "(Presione ENTER para continuar...)" << endl;
+        cin.get();
+        return nuevaRaiz;
     }
     if (balance > 1 && getBalance(r->izquierdo) < 0) {
         cout << "Desbalance en nodo " << r->dato << " (Factor: " << balance << "). Aplicando Caso 3 (LR): Rotación Izq-Der" << endl;
         rotacionAplicada = true;
         r->izquierdo = rotacionIzquierda(r->izquierdo);
-        return rotacionDerecha(r);
+        Nodo<T>* nuevaRaiz = rotacionDerecha(r);
+        cout << "Subárbol resultante:" << endl;
+        visualizarArbol(nuevaRaiz);
+        cout << "(Presione ENTER para continuar...)" << endl;
+        cin.get();
+        return nuevaRaiz;
     }
     if (balance < -1 && getBalance(r->derecho) > 0) {
         cout << "Desbalance en nodo " << r->dato << " (Factor: " << balance << "). Aplicando Caso 4 (RL): Rotación Der-Izq" << endl;
         rotacionAplicada = true;
         r->derecho = rotacionDerecha(r->derecho);
-        return rotacionIzquierda(r);
+        Nodo<T>* nuevaRaiz = rotacionIzquierda(r);
+        cout << "Subárbol resultante:" << endl;
+        visualizarArbol(nuevaRaiz);
+        cout << "(Presione ENTER para continuar...)" << endl;
+        cin.get();
+        return nuevaRaiz;
     }
     return r;
 }
