@@ -27,6 +27,8 @@ Nodo<T>* crearNodo(T valor) {
     return nuevo;
 }
 
+//.
+
 // Función para insertar un nodo en el árbol binario de búsqueda
 template <typename T>
 Nodo<T>* insertar(Nodo<T>* raiz, T valor, bool mostrarMensaje = true) {
