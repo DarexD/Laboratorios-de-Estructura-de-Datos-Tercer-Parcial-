@@ -178,24 +178,27 @@ Nodo* rotacionIzquierda(Nodo* x) {
 }
 
 // Función para balancear un nodo individual aplicando los 4 casos
-Nodo* balancearNodo(Nodo* r) {
+Nodo* balancearNodo(Nodo* r, bool& rotacionAplicada) {
     int balance = getBalance(r);
 
     // Caso 1: Izquierda-Izquierda (LL) -> Rotación Derecha
     if (balance > 1 && getBalance(r->izquierdo) >= 0) {
         cout << "Aplicando Caso 1 (LL): Rotación Derecha en nodo " << r->dato << endl;
+        rotacionAplicada = true;
         return rotacionDerecha(r);
     }
 
     // Caso 2: Derecha-Derecha (RR) -> Rotación Izquierda
     if (balance < -1 && getBalance(r->derecho) <= 0) {
         cout << "Aplicando Caso 2 (RR): Rotación Izquierda en nodo " << r->dato << endl;
+        rotacionAplicada = true;
         return rotacionIzquierda(r);
     }
 
     // Caso 3: Izquierda-Derecha (LR) -> Rotación Izquierda en hijo + Rotación Derecha
     if (balance > 1 && getBalance(r->izquierdo) < 0) {
         cout << "Aplicando Caso 3 (LR): Rotación Izq-Der en nodo " << r->dato << endl;
+        rotacionAplicada = true;
         r->izquierdo = rotacionIzquierda(r->izquierdo);
         return rotacionDerecha(r);
     }
@@ -203,6 +206,7 @@ Nodo* balancearNodo(Nodo* r) {
     // Caso 4: Derecha-Izquierda (RL) -> Rotación Derecha en hijo + Rotación Izquierda
     if (balance < -1 && getBalance(r->derecho) > 0) {
         cout << "Aplicando Caso 4 (RL): Rotación Der-Izq en nodo " << r->dato << endl;
+        rotacionAplicada = true;
         r->derecho = rotacionDerecha(r->derecho);
         return rotacionIzquierda(r);
     }
@@ -211,15 +215,15 @@ Nodo* balancearNodo(Nodo* r) {
 }
 
 // Función recursiva para convertir todo el árbol en AVL (Post-orden)
-Nodo* convertirAAVL(Nodo* raiz) {
+Nodo* convertirAAVL(Nodo* raiz, bool& rotacionAplicada) {
     if (raiz == NULL) return NULL;
 
     // Primero balanceamos los subárboles (de abajo hacia arriba)
-    raiz->izquierdo = convertirAAVL(raiz->izquierdo);
-    raiz->derecho = convertirAAVL(raiz->derecho);
+    raiz->izquierdo = convertirAAVL(raiz->izquierdo, rotacionAplicada);
+    raiz->derecho = convertirAAVL(raiz->derecho, rotacionAplicada);
 
     // Luego balanceamos el nodo actual con la nueva altura de sus hijos
-    return balancearNodo(raiz);
+    return balancearNodo(raiz, rotacionAplicada);
 }
 
 // --- LÓGICA DE VISUALIZACIÓN (RECICLADA DE 2.cpp) ---
@@ -511,8 +515,14 @@ int main() {
                     cout << "¡El árbol está vacío!" << endl;
                 } else {
                     cout << "Balanceando el árbol..." << endl;
-                    raiz = convertirAAVL(raiz);
-                    cout << "¡Árbol balanceado exitosamente!" << endl;
+                    bool rotacionAplicada = false;
+                    raiz = convertirAAVL(raiz, rotacionAplicada);
+                    
+                    if (rotacionAplicada) {
+                         cout << "¡Árbol balanceado exitosamente!" << endl;
+                    } else {
+                         cout << "(El árbol ya estaba balanceado, no se realizaron cambios)" << endl;
+                    }
                 }
                 break;
 
