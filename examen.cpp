@@ -169,23 +169,23 @@ Nodo<T>* balancearNodo(Nodo<T>* r, bool& rotacionAplicada) {
     int balance = getBalance(r);
 
     if (balance > 1 && getBalance(r->izquierdo) >= 0) {
-        cout << "Aplicando Caso 1 (LL): Rotación Derecha en nodo " << r->dato << endl;
+        cout << "Desbalance en nodo " << r->dato << " (Factor: " << balance << "). Aplicando Caso 1 (LL): Rotación Derecha" << endl;
         rotacionAplicada = true;
         return rotacionDerecha(r);
     }
     if (balance < -1 && getBalance(r->derecho) <= 0) {
-        cout << "Aplicando Caso 2 (RR): Rotación Izquierda en nodo " << r->dato << endl;
+        cout << "Desbalance en nodo " << r->dato << " (Factor: " << balance << "). Aplicando Caso 2 (RR): Rotación Izquierda" << endl;
         rotacionAplicada = true;
         return rotacionIzquierda(r);
     }
     if (balance > 1 && getBalance(r->izquierdo) < 0) {
-        cout << "Aplicando Caso 3 (LR): Rotación Izq-Der en nodo " << r->dato << endl;
+        cout << "Desbalance en nodo " << r->dato << " (Factor: " << balance << "). Aplicando Caso 3 (LR): Rotación Izq-Der" << endl;
         rotacionAplicada = true;
         r->izquierdo = rotacionIzquierda(r->izquierdo);
         return rotacionDerecha(r);
     }
     if (balance < -1 && getBalance(r->derecho) > 0) {
-        cout << "Aplicando Caso 4 (RL): Rotación Der-Izq en nodo " << r->dato << endl;
+        cout << "Desbalance en nodo " << r->dato << " (Factor: " << balance << "). Aplicando Caso 4 (RL): Rotación Der-Izq" << endl;
         rotacionAplicada = true;
         r->derecho = rotacionDerecha(r->derecho);
         return rotacionIzquierda(r);
