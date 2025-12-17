@@ -389,8 +389,7 @@ int main() {
                     valor = leerNumeroEntero("Ingrese el valor a eliminar: ");
                     Nodo* nodoA = buscar(raiz, valor);
                     if (nodoA != NULL) {
-                        int estrategia = 2; // Por defecto: Menor de los Mayores
-                        // Solo preguntamos si el nodo tiene dos hijos, ya que es el único caso donde importa
+                        int estrategia = 2; 
                         if (nodoA->izquierdo != NULL && nodoA->derecho != NULL) {
                             cout << "\nEl nodo tiene dos hijos. Seleccione estrategia de reemplazo:" << endl;
                             cout << "1. Mayor de los Menores (Predecesor)" << endl;
